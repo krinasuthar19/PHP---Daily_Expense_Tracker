@@ -1,181 +1,176 @@
-Daily Expense Tracker (DET)
+# Daily Expense Tracker (DET)
 
-A personal financial management application designed to provide users with a clean, efficient interface for tracking daily expenses, managing monthly budgets, and visualizing spending habits over customizable timeframes.
+## Overview
 
-🚀 Live Demo
+Daily Expense Tracker (DET) is a personal financial management web application designed to help users track daily expenses, manage monthly budgets, and visualize spending habits. It provides a clean and efficient interface along with dynamic reporting features for better financial decision-making.
 
-The Daily Expense Tracker is currently hosted and available at:
+---
 
-https://exp.kesug.com
+## Key Features
 
-✨ Key Features & Enhancements
+### Expense and Budget Management
+- Track daily expenses with categories  
+- Set monthly budgets for each category  
+- Prevent budgets from exceeding total monthly income  
 
-This application includes robust database-driven functionality built around security and ease of use:
+---
 
-Multi-Month Persistence: The dashboard remembers the user's selected month and year, ensuring consistency when navigating between pages (Dashboard, Budgeting, Management).
+### Multi-Month Persistence
+- Remembers selected month and year across pages  
+- Ensures consistent navigation between dashboard and reports  
 
-Income-Limited Budgeting: Users cannot set total category budgets that exceed their recorded total income for that specific month, enforcing responsible financial planning.
+---
 
-Dynamic Category Management: Expense categories are managed via a dedicated panel (manage_categories.php) and stored in the database, allowing users to add, remove (archive), and reactivate categories instantly without touching code.
+### Dynamic Category Management
+- Add, remove, or reactivate expense categories  
+- Categories stored in database (no code changes required)  
 
-Daily Report View: A dedicated page (daily_report.php) allows users to select any single date to see a list of transactions and a detailed Pie Chart breakdown of spending for that specific day.
+---
 
-Dynamic Reporting: Analytics charts respond to user filters (Monthly, Yearly, All-Time), providing flexible insight into income and expenditure.
+### Daily Report View
+- View transactions for a selected date  
+- Pie chart visualization of daily spending  
 
-Secure Authentication: User passwords are encrypted using password_hash() and verified using password_verify() (PHP standard).
+---
 
-💻 Technology Stack
+### Analytics and Reporting
+- View insights based on:
+  - Monthly data  
+  - Yearly data  
+  - All-time data  
+- Interactive charts using Chart.js  
 
-Backend: PHP (Native, with MySQLi Prepared Statements)
+---
 
-Database: MySQL / MariaDB
+### Secure Authentication
+- Password encryption using `password_hash()`  
+- Secure login verification using `password_verify()`  
 
-Key tables: users, expenses, income, budgets, expense_categories
+---
 
-Frontend: HTML5, CSS3, JavaScript
+## Tech Stack
 
-Framework/Libraries:
+### Backend
+- PHP (Native, MySQLi Prepared Statements)
 
-Bootstrap 4/5 (for responsive design and components)
+### Database
+- MySQL / MariaDB  
 
-Chart.js (for all data visualizations)
+### Frontend
+- HTML5  
+- CSS3  
+- JavaScript  
 
-Feather Icons (for vector icons)
+### Libraries and Tools
+- Bootstrap 4/5  
+- Chart.js  
+- Feather Icons  
 
-🛠️ Installation and Setup
+---
 
-Prerequisites
+## Database Structure
 
-You need a local environment set up (e.g., XAMPP, MAMP, or WAMP) capable of running PHP and MySQL.
+Main tables used in the system:
 
-1. Database Configuration
+- users  
+- expenses  
+- income  
+- budgets  
+- expense_categories  
 
-Create a new database named dailyexpense.
+---
 
-Ensure your connection file (config.php) points to the correct host, username, and password (127.0.0.1, 3307, etc.).
+## Installation and Setup
 
-Create the required tables. You must execute the following schema definitions:
+### Prerequisites
 
--- 1. USERS TABLE (The base table for foreign keys)
-CREATE TABLE users (
-    user_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    firstname VARCHAR(50) NOT NULL,
-    lastname VARCHAR(50),
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL, -- Stores the secure hash
-    trn_date DATETIME NOT NULL
-) ENGINE=InnoDB;
+- XAMPP / WAMP / MAMP  
+- PHP and MySQL environment  
 
--- 2. BUDGETS TABLE (Requires unique index for UPSERT logic)
-CREATE TABLE budgets (
-    budget_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT(11) NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    budget_limit DECIMAL(10, 2) NOT NULL,
-    budget_month INT(2) NOT NULL,
-    budget_year INT(4) NOT NULL,
-    
-    UNIQUE KEY unique_budget (user_id, category, budget_month, budget_year),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+---
 
--- 3. EXPENSE CATEGORIES TABLE (Dynamic category management)
-CREATE TABLE expense_categories (
-    category_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT(11) NOT NULL,
-    category_name VARCHAR(100) NOT NULL,
-    category_status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
-    
-    UNIQUE KEY user_category (user_id, category_name),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+### Steps to Run
 
--- 4. EXPENSES TABLE
-CREATE TABLE expenses (
-    expense_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT(11) NOT NULL,
-    expense DECIMAL(10, 2) NOT NULL,
-    expensecategory VARCHAR(100) NOT NULL,
-    expensedate DATE NOT NULL,
-    expensenote VARCHAR(255),
-    
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+1. Create a database named:
 
--- 5. INCOME TABLE
-CREATE TABLE income (
-    income_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT(11) NOT NULL,
-    income_amount DECIMAL(10, 2) NOT NULL,
-    income_source VARCHAR(100),
-    income_date DATE NOT NULL,
-    
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+```sql
+CREATE DATABASE dailyexpense;
+````
 
+2. Configure database connection in `config.php`
 
-2. Initial Setup Steps
+3. Create required tables (users, budgets, categories, expenses, income)
 
-Register: Navigate to register.php and create a new account.
+4. Place project folder in:
 
-Add Categories: After logging in, go to the Manage Categories page and add your desired expense categories (e.g., 'Groceries', 'Rent', 'Travel').
+```
+htdocs/
+```
 
-Add Income: Go to Income Management and record your monthly income for the current or desired month.
+5. Start Apache and MySQL
 
-Set Budgets: Use the Budgeting page to allocate funds to your categories. The budget cannot exceed your recorded income.
+6. Open browser and run:
 
-📄 Page Structure
+```
+http://localhost/project-folder
+```
 
-The application consists of the following core pages:
+---
 
-File
+## Usage
 
-Purpose
+1. Register a new account
+2. Add expense categories
+3. Record income
+4. Set monthly budgets
+5. Track expenses
+6. Analyze reports and dashboards
 
-index.php
+---
 
-Dashboard (Summary, Monthly Totals, Filter)
+## Project Structure
 
-login.php
+* index.php – Dashboard
+* login.php – Login page
+* register.php – Registration
+* config.php – Database configuration
+* add_expense.php – Add expenses
+* manage_expense.php – Manage expenses
+* income.php – Income tracking
+* budget.php – Budget management
+* manage_categories.php – Category management
+* daily_report.php – Daily analytics
+* reports.php – Advanced reports
 
-User Authentication
+---
 
-register.php
+## Use Cases
 
-New User Registration
+* Personal expense tracking
+* Budget planning
+* Financial habit analysis
+* Academic and portfolio project
 
-session.php
+---
 
-Session and authentication check for protected pages
+## Limitations
 
-config.php
+* No mobile app support
+* No cloud sync
+* Limited scalability
 
-Database connection settings
+---
 
-add_expense.php
+## Future Improvements
 
-Form to log new expenditures
+* Add mobile responsiveness improvements
+* Integrate real-time sync
+* Add export reports (PDF/Excel)
+* Implement notifications
 
-manage_expense.php
+---
 
-View, Filter, and Delete expense history
+## Conclusion
 
-income.php
+This project demonstrates a complete web-based financial tracking system with secure authentication, dynamic data handling, and interactive visualizations. It provides a practical solution for managing personal finances efficiently.
 
-Manage income entries
-
-budget.php
-
-Set monthly budgets with income caps
-
-manage_categories.php
-
-Add, View, and Archive custom expense categories
-
-daily_report.php
-
-View transactions and spending chart for a single selected day
-
-reports.php
-
-Advanced historical analysis (Monthly, Yearly, All-Time trends)
